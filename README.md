@@ -63,29 +63,6 @@ The LiDAR pipeline operates directly on point clouds and odometry. The grid main
   </tr>
 </table>
 
-## Experimental results
-
-The following results are from Tables II and III of the [paper](https://doi.org/10.1109/TCE.2026.3725136). Section V describes the experimental settings and metric definitions.
-
-**Public datasets — Table II (selected dynamic mapping methods).** `t_u` is average map-fusion time per frame; RAM is peak map-maintenance memory. These offline experiments use an Intel i7, 0.2 m grids, and 0.1 m point-cloud downsampling.
-
-| Dataset | Method | `t_u` (ms) ↓ | IoU (%) ↑ | Peak RAM (MB) ↓ |
-| :-- | :-- | --: | --: | --: |
-| New College | Classified-DOGM | 3.522 | 90.23 | 6,873.195 |
-| New College | Instance-RFS | 5.140 | 92.15 | 7,850.420 |
-| New College | **EDOG-Map** | **1.702** | **93.72** | **364.737** |
-| KITTI 07 | Classified-DOGM | 2,083.774 | 89.56 | 12,574.026 |
-| KITTI 07 | Instance-RFS | 3,150.880 | 91.80 | 15,800.500 |
-| KITTI 07 | **EDOG-Map** | **1,326.953** | **94.75** | **2,160.263** |
-
-**Dynamic detection — Table III (EDOG-Map, controlled experiments with Vicon ground truth).**
-
-| Sequence | Precision (%) | Recall (%) | F1-score (%) | IoU (%) |
-| :-- | --: | --: | --: | --: |
-| Sequence 1 | 91.5 | 89.3 | 90.4 | 82.6 |
-| Sequence 2 | 88.7 | 86.4 | 87.5 | 78.1 |
-| Sequence 3 | 87.2 | 88.1 | 87.6 | 77.8 |
-
 ## Quick start
 
 ### 1. Set up the Python environment
