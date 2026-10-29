@@ -1,0 +1,30 @@
+# Python bytecode and local environments
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+*.egg-info/
+build/
+dist/
+
+# Generated maps, local datasets, recordings, and model weights
+/results/
+/data/
+/datasets/
+/pretrained/
+*.bag
+*.bag.active
+*.db3
+*.mcap
+
+# Editor and operating-system files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Local secrets
+.env
+.env.*
+!.env.example

@@ -1,0 +1,31 @@
+cff-version: 1.2.0
+message: "If you use EDOG-Map in your research, please cite the associated paper below."
+type: software
+title: EDOG-Map
+authors:
+  - family-names: Tan
+    given-names: Zheng
+  - family-names: Zhang
+    given-names: Zuowei
+  - family-names: Lyu
+    given-names: Yang
+  - family-names: Pan
+    given-names: Quan
+repository-code: "https://github.com/HKPolyU-UAV/EDOG-Map"
+url: "https://github.com/HKPolyU-UAV/EDOG-Map"
+preferred-citation:
+  type: article
+  title: "EDOG-Map: Evidential Dynamic Occupancy Grid Mapping for Consumer-Grade UAV Navigation in Dynamic Environments"
+  authors:
+    - family-names: Tan
+      given-names: Zheng
+    - family-names: Zhang
+      given-names: Zuowei
+    - family-names: Lyu
+      given-names: Yang
+    - family-names: Pan
+      given-names: Quan
+  journal: IEEE Transactions on Consumer Electronics
+  year: 2026
+  doi: 10.1109/TCE.2026.3725136
+  url: "https://ieeexplore.ieee.org/document/11658911/"
