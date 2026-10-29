@@ -169,8 +169,6 @@ A machine-readable citation is provided in [`CITATION.cff`](CITATION.cff).
 
 For setup questions and reproducible issues, use [GitHub Issues](https://github.com/HKPolyU-UAV/EDOG-Map/issues). Include the environment, topic/frame conventions, parameters, and a minimal example. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
-Research contact: **Zheng Tan** — [tanz@mail.nwpu.edu.cn](mailto:tanz@mail.nwpu.edu.cn).
-
 ## License
 
 A software license has not yet been specified. Please contact the authors regarding reuse terms.
