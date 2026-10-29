@@ -4,8 +4,6 @@
 
 ### Evidential Dynamic Occupancy Grid Mapping for<br>Consumer-Grade UAV Navigation in Dynamic Environments
 
-**Zheng Tan · Zuowei Zhang · Yang Lyu · Quan Pan**
-
 *IEEE Transactions on Consumer Electronics, 2026*<br>
 DOI: **10.1109/TCE.2026.3725136**
 
