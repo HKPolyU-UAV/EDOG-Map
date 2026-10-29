@@ -4,7 +4,6 @@
 
 ### 面向动态环境中消费级无人机导航的证据动态占据栅格建图
 
-**Zheng Tan · Zuowei Zhang · Yang Lyu · Quan Pan**
 
 *IEEE Transactions on Consumer Electronics, 2026*<br>
 DOI：**10.1109/TCE.2026.3725136**
@@ -49,29 +48,6 @@ LiDAR 流水线直接处理点云与里程计。地图质量通道顺序为 **�
     <td align="center">高架桥环境 · 论文图 10</td>
   </tr>
 </table>
-
-## 实验结果
-
-以下结果摘自论文表 II 和表 III，实验配置和指标定义见[论文](https://doi.org/10.1109/TCE.2026.3725136)第 V 节。
-
-**公开数据集——表 II（节选动态建图方法）。** `t_u` 为每帧平均地图融合时间，RAM 为地图维护的峰值内存。这组离线实验使用 Intel i7、0.2 m 栅格和 0.1 m 点云下采样。
-
-| 数据集 | 方法 | `t_u`（ms）↓ | IoU（%）↑ | 峰值 RAM（MB）↓ |
-| :-- | :-- | --: | --: | --: |
-| New College | Classified-DOGM | 3.522 | 90.23 | 6,873.195 |
-| New College | Instance-RFS | 5.140 | 92.15 | 7,850.420 |
-| New College | **EDOG-Map** | **1.702** | **93.72** | **364.737** |
-| KITTI 07 | Classified-DOGM | 2,083.774 | 89.56 | 12,574.026 |
-| KITTI 07 | Instance-RFS | 3,150.880 | 91.80 | 15,800.500 |
-| KITTI 07 | **EDOG-Map** | **1,326.953** | **94.75** | **2,160.263** |
-
-**动态检测——表 III（以 Vicon 为真值的受控实验，EDOG-Map）。**
-
-| 序列 | Precision（%） | Recall（%） | F1-score（%） | IoU（%） |
-| :-- | --: | --: | --: | --: |
-| Sequence 1 | 91.5 | 89.3 | 90.4 | 82.6 |
-| Sequence 2 | 88.7 | 86.4 | 87.5 | 78.1 |
-| Sequence 3 | 87.2 | 88.1 | 87.6 | 77.8 |
 
 ## 快速开始
 
