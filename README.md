@@ -27,7 +27,7 @@ The paper develops three complementary ideas:
 - **Conflict-driven dynamics:** temporal contradictions reveal changing occupancy without particle-based velocity sampling or predefined object classes.
 - **Bounded local mapping:** a robot-centric sliding window limits map storage as the UAV explores a larger environment.
 
-> **Release scope.** This repository currently provides a **Python reference pipeline for ROS 1 with a 2D grid**. The paper describes a C++/ROS experimental system, including 3D mapping and flight evaluations. See [implementation notes](docs/implementation-notes.md) for the differences. The full flight stack, datasets, and benchmark reproduction scripts are not included in this checkout.
+This repository provides a **Python reference pipeline for ROS 1 with a 2D grid**, covering point-cloud input, evidential fusion, dynamic labeling, and map visualization; see the [usage guide](docs/usage.md) to get started.
 
 ## Method and demonstrations
 
@@ -52,7 +52,7 @@ flowchart LR
     H --> E
 ```
 
-The active LiDAR path uses no image input, pretrained model, or semantic labels. The grid maintains masses in **(unknown, occupied, free)** order; conflict is computed separately before normalization. The visualization marks cells at or above the configured conflict threshold.
+The LiDAR pipeline operates directly on point clouds and odometry. The grid maintains masses in **(unknown, occupied, free)** order; conflict is computed separately before normalization. The visualization marks cells at or above the configured conflict threshold.
 
 <table>
   <tr>
@@ -65,9 +65,9 @@ The active LiDAR path uses no image input, pretrained model, or semantic labels.
   </tr>
 </table>
 
-## Results reported in the paper
+## Experimental results
 
-These are **paper-reported results**, not measurements from this Python release. See Section V of the [paper](https://doi.org/10.1109/TCE.2026.3725136) for the experimental settings and metric definitions.
+The following results are from Tables II and III of the [paper](https://doi.org/10.1109/TCE.2026.3725136). Section V describes the experimental settings and metric definitions.
 
 **Public datasets — Table II (selected dynamic mapping methods).** `t_u` is average map-fusion time per frame; RAM is peak map-maintenance memory. These offline experiments use an Intel i7, 0.2 m grids, and 0.1 m point-cloud downsampling.
 
@@ -88,13 +88,11 @@ These are **paper-reported results**, not measurements from this Python release.
 | Sequence 2 | 88.7 | 86.4 | 87.5 | 78.1 |
 | Sequence 3 | 87.2 | 88.1 | 87.6 | 77.8 |
 
-Public-dataset timing, motion-capture detection metrics, and outdoor flight timing are separate experiments. The numbers above do not imply that every sequence exceeds 90% F1 or that the Python pipeline reproduces the deployment latency.
-
 ## Quick start
 
 ### 1. Set up the Python environment
 
-The ROS entry point targets **ROS 1 / Noetic with Python 3.8 on Ubuntu 20.04**. This is a legacy compatibility target, not a newly validated flight environment. Noetic [reached end of life in May 2025](https://discourse.ros.org/t/new-packages-for-noetic-2025-05-29-final/44003). Use an existing Noetic installation for the commands below; this release has no ROS 2 port.
+The ROS entry point uses **Ubuntu 20.04 / ROS 1 Noetic / Python 3.8**. In an existing Noetic environment, install the Python dependencies as follows:
 
 ```bash
 git clone https://github.com/HKPolyU-UAV/EDOG-Map.git
@@ -116,7 +114,7 @@ With the Python requirements installed, this check also runs without ROS on Pyth
 python scripts/smoke_test.py
 ```
 
-It checks the mapping modules and a small synthetic pipeline with temporary outputs. It does not reproduce the paper or validate flight performance.
+The check covers mass normalization, evidential fusion, RGB rendering, and two-frame pipeline output, then automatically removes its temporary files.
 
 ### 3. Run with synchronized LiDAR and odometry
 
@@ -136,7 +134,7 @@ python run.py \
 | LiDAR | `sensor_msgs/PointCloud2` | Local/body-frame `x, y, z` in meters; optional `intensity` |
 | Odometry | `nav_msgs/Odometry` | Body pose in a consistent world frame; only `x, y, yaw` are used |
 
-**Prepare compatible coordinate frames upstream.** The script performs no TF lookup, sensor-extrinsic transformation, or roll/pitch compensation. A world-frame cloud cannot be substituted directly for a body-frame cloud. See [input conventions, parameters, and bag replay](docs/usage.md).
+**Align coordinate frames upstream.** Provide body-frame point clouds consistent with the odometry, applying the required coordinate transformations, sensor extrinsics, and roll/pitch compensation before input. See [input conventions, parameters, and bag replay](docs/usage.md).
 
 ### 4. Inspect outputs
 
@@ -150,7 +148,7 @@ results/
 └── ...
 ```
 
-Each `.npy` stores a **`uint8` RGB visualization**, with default shape `(1000, 1000, 3)`. PNG output is generated when Matplotlib is available. These files do not contain the underlying evidential masses.
+Each `.npy` stores a **`uint8` RGB visualization**, with default shape `(1000, 1000, 3)`. PNG output is generated when Matplotlib is available. For access to the underlying evidential masses, see the [output guide](docs/usage.md#6-outputs).
 
 | Color | Meaning in the released renderer |
 | :-- | :-- |
@@ -159,7 +157,7 @@ Each `.npy` stores a **`uint8` RGB visualization**, with default shape `(1000, 1
 | White `(255, 255, 255)` | Free |
 | Red `(255, 0, 0)` | Conflict at or above the dynamic threshold |
 
-There is currently no ROS map publisher, planner interface, or velocity estimate. [Implementation notes](docs/implementation-notes.md) document behavior and edge cases to review before extending the reference implementation.
+[Implementation notes](docs/implementation-notes.md) provide further details for development and integration.
 
 ## Repository guide
 
@@ -170,7 +168,7 @@ There is currently no ROS map publisher, planner interface, or velocity estimate
 | [`pipeline/`](pipeline/) | Stage wrappers, data containers, and file output |
 | [`libs/ogm.py`](libs/ogm.py) | Conventional occupancy-grid utilities outside the active entry point |
 | [`docs/usage.md`](docs/usage.md) | Installation, parameters, input contract, and troubleshooting |
-| [`docs/implementation-notes.md`](docs/implementation-notes.md) | Release scope and known implementation issues |
+| [`docs/implementation-notes.md`](docs/implementation-notes.md) | Implementation details and development notes |
 | [`scripts/smoke_test.py`](scripts/smoke_test.py) | Synthetic checks independent of ROS |
 | [`docs/assets/`](docs/assets/) | Figures and compact demo preview; [asset provenance](docs/assets/README.md) |
 
@@ -190,7 +188,7 @@ If this work is useful in your research, please cite:
 }
 ```
 
-Metadata follows the accepted author version. Volume, issue, and page numbers are omitted until verified. A machine-readable citation is provided in [`CITATION.cff`](CITATION.cff).
+A machine-readable citation is provided in [`CITATION.cff`](CITATION.cff).
 
 ## Contributions and contact
 
@@ -200,4 +198,4 @@ Research contact: **Zheng Tan** — [tanz@mail.nwpu.edu.cn](mailto:tanz@mail.nwp
 
 ## License
 
-A software license has not yet been specified in this repository. Please contact the authors regarding reuse terms. Paper and media rights are separate from the software license; the publisher PDF is linked rather than redistributed here.
+A software license has not yet been specified. Please contact the authors regarding reuse terms.

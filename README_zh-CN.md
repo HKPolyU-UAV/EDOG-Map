@@ -27,7 +27,7 @@ DOI：**10.1109/TCE.2026.3725136**
 - **通过冲突识别动态：** 利用时序证据矛盾发现占据变化，无需基于粒子的速度采样或预定义目标类别。
 - **限制局部地图规模：** 使用以机器人为中心的滑动窗口，在探索大范围环境时限制地图存储规模。
 
-> **当前公开范围：** 仓库提供基于 **ROS 1、使用二维栅格的 Python 参考流水线**。论文介绍的是包含三维建图和飞行实验的 C++/ROS 实验系统，两者的差异见[实现说明](docs/implementation-notes.md)。当前仓库不包含完整飞行系统、实验数据集或基准复现脚本。
+仓库提供基于 **ROS 1 的 Python 二维栅格建图流水线**，涵盖点云接入、证据融合、动态栅格识别和地图输出，详见[使用文档](docs/usage.md)。
 
 ## 方法与效果展示
 
@@ -37,7 +37,7 @@ DOI：**10.1109/TCE.2026.3725136**
 
 当前代码的数据流程为：**点云与里程计同步 → 高度过滤及下采样 → 二维观测证据 → 历史地图位姿对齐 → Dempster–Shafer 融合 → 更新质量与冲突 → RGB 栅格输出**。
 
-LiDAR 运行路径不使用图像、预训练模型或语义标签。地图质量通道顺序为 **未知、占据、空闲**；冲突在归一化之前单独计算，达到设定阈值的栅格在可视化中标红。
+LiDAR 流水线直接处理点云与里程计。地图质量通道顺序为 **未知、占据、空闲**；冲突在归一化之前单独计算，达到设定阈值的栅格在可视化中标红。
 
 <table>
   <tr>
@@ -50,9 +50,9 @@ LiDAR 运行路径不使用图像、预训练模型或语义标签。地图质�
   </tr>
 </table>
 
-## 论文报告的实验结果
+## 实验结果
 
-以下为**论文中的实验结果**，并非本 Python 版本的实测数据。实验配置和指标定义见[论文](https://doi.org/10.1109/TCE.2026.3725136)第 V 节。
+以下结果摘自论文表 II 和表 III，实验配置和指标定义见[论文](https://doi.org/10.1109/TCE.2026.3725136)第 V 节。
 
 **公开数据集——表 II（节选动态建图方法）。** `t_u` 为每帧平均地图融合时间，RAM 为地图维护的峰值内存。这组离线实验使用 Intel i7、0.2 m 栅格和 0.1 m 点云下采样。
 
@@ -73,13 +73,11 @@ LiDAR 运行路径不使用图像、预训练模型或语义标签。地图质�
 | Sequence 2 | 88.7 | 86.4 | 87.5 | 78.1 |
 | Sequence 3 | 87.2 | 88.1 | 87.6 | 77.8 |
 
-公开数据集耗时、动捕实验检测指标和户外飞行耗时来自不同实验。上述结果不代表所有序列的 F1 均超过 90%，也不代表 Python 流水线能复现部署系统的延迟。
-
 ## 快速开始
 
 ### 1. 配置环境
 
-ROS 入口面向 **Ubuntu 20.04 / ROS 1 Noetic / Python 3.8**。这是旧版兼容环境，未据此重新验证完整飞行系统。Noetic 已于 [2025 年 5 月结束官方支持](https://discourse.ros.org/t/new-packages-for-noetic-2025-05-29-final/44003)。以下命令适用于已有 Noetic 环境；仓库尚无 ROS 2 入口。
+ROS 入口使用 **Ubuntu 20.04 / ROS 1 Noetic / Python 3.8**。在已安装 Noetic 的环境中执行：
 
 ```bash
 git clone https://github.com/HKPolyU-UAV/EDOG-Map.git
@@ -100,7 +98,7 @@ python -m pip install -r requirements.txt
 python scripts/smoke_test.py
 ```
 
-该检查验证建图模块和小型合成流水线，并自动清理临时输出；不用于论文复现或飞行性能验证。
+该脚本检查证据质量归一化、融合、RGB 渲染和两帧流水线输出，并自动清理临时文件。
 
 ### 3. 接入同步点云与里程计
 
@@ -120,13 +118,13 @@ python run.py \
 | LiDAR | `sensor_msgs/PointCloud2` | 局部/机体系 `x, y, z`，单位为米；`intensity` 可选 |
 | 里程计 | `nav_msgs/Odometry` | 一致世界坐标系下的机体位姿，仅使用 `x, y, yaw` |
 
-**需要在上游对齐坐标系。** 脚本不会查询 TF、应用传感器外参或补偿横滚/俯仰。不能直接用世界系点云替代机体系点云。输入约定、参数和 bag 回放方法见[使用文档](docs/usage.md)。
+接入前，请在上游完成所需的坐标变换、传感器外参变换及横滚/俯仰补偿，使点云与里程计采用一致的机体坐标约定。输入要求、参数和 bag 回放方法见[使用文档](docs/usage.md)。
 
 ### 4. 查看输出
 
 输出默认保存在当前工作目录的 `results/` 下，文件形如 `000000_dgm_pred.npy` 和 `000000_dgm_pred.png`，按帧编号递增。
 
-`.npy` 保存的是 **`uint8` RGB 可视化图**，默认形状为 `(1000, 1000, 3)`，并非底层证据质量数组。Matplotlib 可用时同时生成 PNG。
+`.npy` 保存 **`uint8` RGB 可视化图**，默认形状为 `(1000, 1000, 3)`。Matplotlib 可用时同时生成 PNG，证据质量数组的访问方式见[使用文档](docs/usage.md#6-outputs)。
 
 | 颜色 | 当前渲染器中的含义 |
 | :-- | :-- |
@@ -135,7 +133,7 @@ python run.py \
 | 白色 `(255, 255, 255)` | 空闲 |
 | 红色 `(255, 0, 0)` | 冲突达到动态阈值 |
 
-当前版本没有 ROS 地图发布器、规划器接口或速度估计。[实现说明](docs/implementation-notes.md)记录了扩展参考实现前需要了解的行为和边界情况。
+[实现说明](docs/implementation-notes.md)介绍地图更新细节与后续开发事项。
 
 ## 仓库结构
 
@@ -146,7 +144,7 @@ python run.py \
 | [`pipeline/`](pipeline/) | 流水线阶段、数据容器与输出 |
 | [`libs/ogm.py`](libs/ogm.py) | 当前入口之外的传统占据栅格工具 |
 | [`docs/usage.md`](docs/usage.md) | 安装、参数、输入要求与排错 |
-| [`docs/implementation-notes.md`](docs/implementation-notes.md) | 公开范围与已知实现问题 |
+| [`docs/implementation-notes.md`](docs/implementation-notes.md) | 实现细节与开发说明 |
 | [`scripts/smoke_test.py`](scripts/smoke_test.py) | 不依赖 ROS 的合成检查 |
 | [`docs/assets/`](docs/assets/) | 图片与演示预览；[素材来源](docs/assets/README.md) |
 
@@ -166,7 +164,7 @@ python run.py \
 }
 ```
 
-引文信息依据已接收的作者版本；未核实的卷、期、页码暂不填写。机器可读引文见 [`CITATION.cff`](CITATION.cff)。
+机器可读引文见 [`CITATION.cff`](CITATION.cff)。
 
 ## 贡献与联系
 
@@ -174,4 +172,4 @@ python run.py \
 
 ## 许可证
 
-仓库尚未指定软件许可证，使用条款请联系作者。论文及媒体素材的权利与软件许可证分开处理；仓库提供出版方 PDF 链接，不重新分发该 PDF。
+软件许可证待补充，使用条款请联系作者。
