@@ -7,7 +7,7 @@
 *IEEE Transactions on Consumer Electronics, 2026*<br>
 DOI: **10.1109/TCE.2026.3725136**
 
-[**Paper**](https://ieeexplore.ieee.org/abstract/document/11658911/) · [**Video**](https://www.youtube.com/watch?v=SXceoPBKvmA) · [**Quick start**](#quick-start) · [**Documentation**](docs/usage.md) · [**中文**](README_zh-CN.md)
+[**Paper**](https://ieeexplore.ieee.org/abstract/document/11658911/) · [**Video**](https://www.youtube.com/watch?v=SXceoPBKvmA) · [**Quick start**](#quick-start) · [**Documentation**](docs/usage.md)
 
 <a href="https://www.youtube.com/watch?v=SXceoPBKvmA"><img src="docs/assets/demo.gif" alt="Outdoor EDOG-Map demonstration: camera, point cloud and dynamic occupancy grid" width="840"></a>
 
